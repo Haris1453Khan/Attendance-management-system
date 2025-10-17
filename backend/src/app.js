@@ -5,10 +5,13 @@ const app = express();
 
 app.use(cors());
 
-import userRouter from './routes/user.routes.js'
-
 app.use(express.json());
 
+import userRouter from './routes/user.routes.js';
+
+import handleEmployeeRouter from './routes/employee.router.js'
+
 app.use('/api/user' , userRouter)
+app.use('/api/employees' , handleEmployeeRouter)
 
 export {app}

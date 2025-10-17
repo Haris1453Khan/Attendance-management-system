@@ -18,6 +18,7 @@ export default function SignUp() {
       [e.target.name]: e.target.value,
     });
   };
+  const [loading , setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,10 +27,9 @@ export default function SignUp() {
       alert("Passwords do not match!");
       return;
     }
-
+    
     // TODO: send formData to backend API
     console.log("Signup data:", formData);
-    const [loading , setLoading] = useState(false);
     try{
         setLoading(true);
         const {data} = await API.post('/user/register' , {

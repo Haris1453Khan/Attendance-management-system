@@ -15,4 +15,4 @@ const employeeSchema = new mongoose.Schema({
     {timestamps:true}
 );
 
-export default mongoose.model('Emplopyee' , employeeSchema);
+export default mongoose.model('Employee' , employeeSchema);

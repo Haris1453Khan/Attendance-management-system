@@ -1,8 +1,10 @@
 import { useState } from "react"
 import { Menu, X } from "lucide-react" // icons (lucide-react is already in Vite+Tailwind templates)
+import {useNavigate} from 'react-router-dom';
 
 export default function Dashboard() {
   const [isOpen, setIsOpen] = useState(false)
+  const navigate = useNavigate();
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -40,7 +42,7 @@ export default function Dashboard() {
               Dashboard
             </button>
             <button
-              onClick={() => setActivePage("employees")}
+              onClick={() => navigate('/employees')}
               className="block w-full text-left py-2 px-3 rounded hover:bg-blue-200"
             >
               Employees

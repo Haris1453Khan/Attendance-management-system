@@ -59,6 +59,15 @@ function LoginPage() {
             Login
           </button>
         </form>
+        <div className="text-center text-sm text-gray-600 mt-4">
+          Do not have an account?{" "}
+          <button
+            onClick={() => navigate("/signup")}
+            className="text-blue-600 font-semibold hover:underline"
+          >
+            Sign Up
+          </button>
+        </div>
       </div>
     </div>
   )
