@@ -1,17 +1,8 @@
-import { useState } from "react";
-import AddAttendance from "./AddAttendance.jsx";
-import ViewAttendance from "./ViewAttendance.jsx";
+import {useNavigate} from 'react-router-dom';
 
 export default function Attendance() {
-  const [activePage, setActivePage] = useState("main"); // main | add | view
 
-  if (activePage === "add") {
-    return <AddAttendance  onBack={() => setActivePage("main")}/>;
-  }
-
-  if (activePage === "view") {
-    return <ViewAttendance  onBack={() => setActivePage("main")}/>;
-  }
+  const navigate = useNavigate();
 
   return (
     <div className="flex min-h-screen bg-gray-100 justify-center items-center px-4">
@@ -25,14 +16,14 @@ export default function Attendance() {
         <div className="flex flex-col gap-4">
           <button
             className="w-full bg-blue-600 text-white text-lg font-semibold py-3 rounded-xl shadow-md hover:bg-blue-700 transition duration-200 cursor-pointer"
-            onClick={() => setActivePage("view")}
+            onClick={() => navigate("/view-attendance")}
           >
             View Attendance
           </button>
 
           <button
             className="w-full bg-green-600 text-white text-lg font-semibold py-3 rounded-xl shadow-md hover:bg-green-700 transition duration-200 cursor-pointer"
-            onClick={() => setActivePage("add")}
+            onClick={() => navigate("/add-attendance")}
           >
             Add Attendance
           </button>

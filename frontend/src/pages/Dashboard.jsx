@@ -36,7 +36,7 @@ export default function Dashboard() {
           <h2 className="text-xl font-bold mb-6">My Web App</h2>
           <nav className="space-y-2">
             <button
-              onClick={() => (setActivePage("dashboard"))}
+              onClick={() => navigate('/dashboard')}
               className="block w-full text-left py-2 px-3 rounded hover:bg-blue-200"
             >
               Dashboard
@@ -48,16 +48,22 @@ export default function Dashboard() {
               Employees
             </button>
             <button
-              onClick={() => setActivePage("attendance")}
+              onClick={() => navigate('/attendance')}
               className="block w-full text-left py-2 px-3 rounded hover:bg-blue-200"
             >
               Attendance
             </button>
             <button
-              onClick={() => setActivePage("salary")}
+              onClick={() => navigate('/salary')}
               className="block w-full text-left py-2 px-3 rounded hover:bg-blue-200"
             >
               Salary
+            </button>
+            <button
+              onClick={() => navigate('/advance')}
+              className="block w-full text-left py-2 px-3 rounded hover:bg-blue-200"
+            >
+              Advances
             </button>
           </nav>
         </aside>

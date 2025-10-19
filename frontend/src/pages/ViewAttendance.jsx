@@ -1,4 +1,9 @@
-export default function ViewAttendance({ onBack }) {
+import {useNavigate} from "react-router-dom";
+
+export default function ViewAttendance() {
+
+  const navigate = useNavigate();
+
   // Example static data (replace with real data later)
   const attendanceData = [
     { id: 1, name: "Ali Khan", date: "2025-08-30", status: "Present" },
@@ -47,7 +52,7 @@ export default function ViewAttendance({ onBack }) {
           </table>
         </div>
                 <button
-                onClick={onBack}
+                onClick={() => navigate("/attendance")}
                 className="text-blue-600 underline text-sm hover:text-blue-800 cursor-pointer"
                 >
                 ← Back
