@@ -1,4 +1,5 @@
 import Attendance from "../models/Attendance.model.js";
+import Employee from "../models/Employee.model.js"
 
 export const addAttendance = async (req , res) => {
     try{
@@ -33,6 +34,39 @@ export const addAttendance = async (req , res) => {
     }
 };
 
-export const viewAttendance = () => {
+export const viewAttendance = async (req , res) => {
+    try{
+        console.log("view Attendance called");
+        const {month , empName} = req.query;
 
+        if(!month || !empName)
+            return res.status(404).json({message:"Plese enter all the required fields."});
+
+        const employee = await Employee.findOne({name : empName})
+        if (!employee) 
+            return res.status(404).json({ message: "Employee not found" });
+
+        const startDate = new Date(month);
+
+        const year = startDate.getFullYear();
+
+        const monthIndex = startDate.getMonth();
+
+        const endDate = new Date(year , monthIndex+1 , 1);
+
+        const attendance = await Attendance.find({
+            employeeId : employee._id,
+            date:{ $gte: startDate, $lt: endDate }
+        })
+
+        if(attendance.length === 0 || !attendance)
+            return res.status(404).json({message:"No attendance found"})
+
+        return res.status(200).json(attendance);
+    }
+    catch(error){
+        console.log("view Attendance called");
+        console.error("View attendance error:", error);
+        return res.status(500).json({ message: "Server error, failed to fetch attendance." });
+    }
 }
