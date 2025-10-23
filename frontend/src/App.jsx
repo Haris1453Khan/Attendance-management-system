@@ -1,13 +1,16 @@
-import { BrowserRouter as Router , Routes , Route } from "react-router-dom"
-import SignUp from "./pages/Signup.jsx"
-import Login from "./pages/Login.jsx"
-import LandingPage from "./pages/LandingPage.jsx"
-import Dashboard from "./pages/Dashboard.jsx"
-import Employees from "./pages/Employees.jsx"
-import Salary from "./pages/Salary.jsx"
-import Attendance from "./pages/Attendance.jsx"
-import ViewAttendance from "./pages/ViewAttendance.jsx"
-import AddAttendance from "./pages/AddAttendance.jsx"
+import { BrowserRouter as Router , Routes , Route } from "react-router-dom";
+import SignUp from "./pages/Signup.jsx";
+import Login from "./pages/Login.jsx";
+import LandingPage from "./pages/LandingPage.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
+import Employees from "./pages/Employees.jsx";
+import Salary from "./pages/Salary.jsx";
+import Attendance from "./pages/Attendance.jsx";
+import ViewAttendance from "./pages/ViewAttendance.jsx";
+import AddAttendance from "./pages/AddAttendance.jsx";
+import Advance from "./pages/Advance.jsx";
+import AddAdvance from "./pages/AddAdvance.jsx";
+import ViewAdvance from "./pages/ViewAddvance.jsx";
 
 
 function App() {
@@ -24,6 +27,9 @@ function App() {
         <Route path="/attendance" element={<Attendance />} />
         <Route path="/view-attendance" element={<ViewAttendance />} />
         <Route path="/add-attendance" element={<AddAttendance />} />
+        <Route path="/advance" element={<Advance />} />
+        <Route path="/add-advance" element={<AddAdvance />} />
+        <Route path="/view-advance" element={<ViewAdvance />} />
       </Routes>
     </Router>
   )

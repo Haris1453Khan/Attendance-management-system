@@ -2,40 +2,41 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import API from "../api/axios.js";
 
-export default function ViewAttendance() {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    month: "",
-    empName: "",
-  });
+export default function ViewAdvance() {
+    const navigate = useNavigate();
+      const [formData, setFormData] = useState({
+        month: "",
+        name: "",
+      });
+    
+      const [advance, setAdvance] = useState([]);
+    
+      // ✅ Correct API Request for GET with params
+      const handleSearch = async () => {
+        try {
+          const { data } = await API.get("/advance", { params: formData });
+          setAdvance(data);
+          console.log(data);
+          alert("Advance fetched successfully!");
+        } catch (error) {
+          console.error(error.response?.data?.message || "Error fetching advance", error);
+          alert(error.response?.data?.message || "Failed while fetching advance.");
+        }
+      };
 
-  const [attendance, setAttendance] = useState([]);
-
-  // ✅ Correct API Request for GET with params
-  const handleSearch = async () => {
-    try {
-      const { data } = await API.get("/attendance", { params: formData });
-      setAttendance(data);
-      alert("Attendance fetched successfully!");
-    } catch (error) {
-      console.error(error.response?.data?.message || "Error fetching attendance", error);
-      alert(error.response?.data?.message || "Failed while fetching attendance.");
-    }
-  };
-
-  const formatDate = (dateString) => {
+      const formatDate = (dateString) => {
         const date = new Date(dateString);
         const day = String(date.getDate()).padStart(2, '0');
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const year = date.getFullYear();
         return `${day}-${month}-${year}`;
-  };
+      };
 
-  return (
+    return (
     <div className="flex min-h-screen bg-gray-100 justify-center items-center px-4">
       <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-4xl flex flex-col gap-6">
         <h1 className="text-2xl font-bold text-gray-800 text-center">
-          Attendance Records
+          Advance Records
         </h1>
 
         {/* Filter Section */}
@@ -58,8 +59,8 @@ export default function ViewAttendance() {
             <input
               type="text"
               placeholder="Enter employee name"
-              value={formData.empName}
-              onChange={(e) => setFormData({ ...formData, empName: e.target.value })}
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
               required
             />
@@ -84,27 +85,19 @@ export default function ViewAttendance() {
                 <th className="px-4 py-2 text-left">#</th>
                 <th className="px-4 py-2 text-left">Employee</th>
                 <th className="px-4 py-2 text-left">Date</th>
-                <th className="px-4 py-2 text-left">Status</th>
-                <th className="px-4 py-2 text-left">Time In</th>
-                <th className="px-4 py-2 text-left">Time Out</th>
-                <th className="px-4 py-2 text-left">Bonus</th>
-                <th className="px-4 py-2 text-left">Stitches</th>
+                <th className="px-4 py-2 text-left">Amount</th>
                 <th className="px-4 py-2 text-left">Note</th>
               </tr>
             </thead>
             <tbody>
-              {attendance.length > 0 ? (
-                attendance.map((attend, index) => (
-                  <tr key={attend._id} className="border-t hover:bg-gray-50">
+              {advance.length > 0 ? (
+                advance.map((adv, index) => (
+                  <tr key={adv._id} className="border-t hover:bg-gray-50">
                     <td className="px-4 py-2">{index + 1}</td>
-                    <td className="px-4 py-2">{attend.name}</td>
-                    <td className="px-4 py-2">{formatDate(attend.date)}</td>
-                    <td className="px-4 py-2">{attend.status}</td>
-                    <td className="px-4 py-2">{attend.timeIn}</td>
-                    <td className="px-4 py-2">{attend.timeOut}</td>
-                    <td className="px-4 py-2">{attend.bonus}</td>
-                    <td className="px-4 py-2">{attend.stitches}</td>
-                    <td className="px-4 py-2">{attend.note}</td>
+                    <td className="px-4 py-2">{formData.name}</td>
+                    <td className="px-4 py-2">{formatDate(adv.date)}</td>
+                    <td className="px-4 py-2">{adv.amount}</td>
+                    <td className="px-4 py-2">{adv.note}</td>
                   </tr>
                 ))
               ) : (
@@ -120,7 +113,7 @@ export default function ViewAttendance() {
 
         {/* Back Button */}
         <button
-          onClick={() => navigate("/attendance")}
+          onClick={() => navigate("/advance")}
           className="text-blue-600 underline text-sm hover:text-blue-800 mt-2 self-start"
         >
           ← Back
