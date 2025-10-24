@@ -17,7 +17,7 @@ export default function ViewAdvance() {
           const { data } = await API.get("/advance", { params: formData });
           setAdvance(data);
           console.log(data);
-          alert("Advance fetched successfully!");
+          alert(data.message || "Advance fetched successfully!");
         } catch (error) {
           console.error(error.response?.data?.message || "Error fetching advance", error);
           alert(error.response?.data?.message || "Failed while fetching advance.");
@@ -112,12 +112,14 @@ export default function ViewAdvance() {
         </div>
 
         {/* Back Button */}
-        <button
-          onClick={() => navigate("/advance")}
-          className="text-blue-600 underline text-sm hover:text-blue-800 mt-2 self-start"
-        >
-          ← Back
-        </button>
+        <div  className="flex justify-center gap-4">
+            <button
+                onClick={() => navigate("/advance")}
+                className="bg-gray-200 text-gray-700 py-2 px-6 rounded-lg hover:bg-gray-300 transition-all"
+            >
+                ← Back
+            </button>
+          </div>
       </div>
     </div>
   );

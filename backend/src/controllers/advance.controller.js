@@ -30,7 +30,7 @@ export const viewAdvance = async (req , res) => {
         const {month , name} = req.query;
 
         if(!month || !name)
-            return res.status(404).json({message:"Please fill all the required fields"});
+            return res.status(400).json({message:"Please fill all the required fields"});
 
         const startDate = new Date(month);
         const endDate = new Date(startDate.getFullYear() , startDate.getMonth()+1 , 1);
@@ -55,6 +55,34 @@ export const viewAdvance = async (req , res) => {
     }
 };
 
-export const deleteAdvance = async () => {
+export const deleteAdvance = async (req , res) => {
+    try{
+        const {date , name} = req.query;
 
+        if(!date || !name)
+            return res.status(400).json({message:"Please fill all the required fields"});
+
+        const employee = await Employee.findOne({name});
+        if(!employee)
+            return res.status(404).json({message:"Employee not found"});
+
+        const dateToDelete = new Date(date);
+
+        const newAdvances = employee.advances.filter(
+            (adv) => new Date(adv.date).toDateString() !== dateToDelete.toDateString()
+        );
+
+        if(employee.advances.length === newAdvances.length)
+            return res.status(404).json({message:"No advances found for this date"});
+
+        employee.advances = newAdvances;
+        await employee.save();
+
+        return res.status(200).json("Advance Deleted Sucessfully.");
+
+    }
+    catch(error){
+        console.error("Error deleting advances:", error);
+        return res.status(500).json({ message: "Server error while deleting advances" });
+    }
 };
