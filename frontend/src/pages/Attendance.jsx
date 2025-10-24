@@ -27,6 +27,13 @@ export default function Attendance() {
           >
             Add Attendance
           </button>
+
+          <button
+            className="w-full bg-red-500 text-white text-lg font-semibold py-3 rounded-xl shadow-md hover:bg-red-600 transition duration-200 cursor-pointer"
+            onClick={() => navigate("/delete-attendance")}
+          >
+            Delete Attendance
+          </button>
         </div>
       </div>
     </div>

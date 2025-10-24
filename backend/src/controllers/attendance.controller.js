@@ -70,3 +70,35 @@ export const viewAttendance = async (req , res) => {
         return res.status(500).json({ message: "Server error, failed to fetch attendance." });
     }
 }
+
+export const deleteAttendance = async (req , res) => {
+    try{
+        const {date , name} = req.query;
+
+        if(!date || !name)
+            return res.status(400).json({message:"Please fill add the required fields"});
+
+        const employee = await Employee.findOne({name});
+
+        if(!employee)
+            return res.status(404).json({message:"Employee not found."});
+
+        // const dateToDelete = new Date(date);
+
+        const isDelete = await Attendance.deleteOne({
+            employeeId : employee._id ,
+            date:date
+            })
+
+        if(isDelete.deletedCount === 0)
+            return res.status(400).json({message:"Failed to delete attendance"});
+
+        return res.status(200).json({message:"Attendance record deleted successfully."});
+
+    }
+    catch(error){
+        console.error("Failed while deleting attendance. Server Error.", error)
+        return res.status(500).json({message:"Failed while deleting attendance. Server Error."});
+    }
+
+};

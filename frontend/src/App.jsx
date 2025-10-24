@@ -12,6 +12,7 @@ import Advance from "./pages/Advance.jsx";
 import AddAdvance from "./pages/AddAdvance.jsx";
 import ViewAdvance from "./pages/ViewAddvance.jsx";
 import DeleteAdvance from "./pages/DeleteAdvance.jsx";
+import DeleteAttendance from "./pages/DeleteAttendance.jsx";
 
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
         <Route path="/attendance" element={<Attendance />} />
         <Route path="/view-attendance" element={<ViewAttendance />} />
         <Route path="/add-attendance" element={<AddAttendance />} />
+        <Route path="/delete-attendance" element={<DeleteAttendance />} />
         <Route path="/advance" element={<Advance />} />
         <Route path="/add-advance" element={<AddAdvance />} />
         <Route path="/view-advance" element={<ViewAdvance />} />
