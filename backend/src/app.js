@@ -11,10 +11,12 @@ import userRouter from './routes/user.routes.js';
 import handleEmployeeRouter from './routes/employee.router.js';
 import attendanceRouter from './routes/attendance.router.js';
 import advanceRouter from './routes/advance.router.js';
+import salaryRouter from './routes/salary.router.js';
 
 app.use('/api/user' , userRouter)
 app.use('/api/employees' , handleEmployeeRouter)
 app.use('/api/attendance' , attendanceRouter)
 app.use('/api/advance' , advanceRouter)
+app.use('/api/salary' , salaryRouter);
 
 export {app}

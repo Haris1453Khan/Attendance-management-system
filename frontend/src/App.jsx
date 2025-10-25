@@ -13,6 +13,7 @@ import AddAdvance from "./pages/AddAdvance.jsx";
 import ViewAdvance from "./pages/ViewAddvance.jsx";
 import DeleteAdvance from "./pages/DeleteAdvance.jsx";
 import DeleteAttendance from "./pages/DeleteAttendance.jsx";
+import CalculateSalary from "./pages/CalculateSalary.jsx";
 
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
         <Route path="/add-advance" element={<AddAdvance />} />
         <Route path="/view-advance" element={<ViewAdvance />} />
         <Route path="/delete-advance" element={<DeleteAdvance />} />
+        <Route path="/calculate-salary" element={<CalculateSalary />} />
       </Routes>
     </Router>
   )
