@@ -4,7 +4,6 @@ import Login from "./pages/Login.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Employees from "./pages/Employees.jsx";
-import Salary from "./pages/Salary.jsx";
 import Attendance from "./pages/Attendance.jsx";
 import ViewAttendance from "./pages/ViewAttendance.jsx";
 import AddAttendance from "./pages/AddAttendance.jsx";
@@ -15,6 +14,8 @@ import DeleteAdvance from "./pages/DeleteAdvance.jsx";
 import DeleteAttendance from "./pages/DeleteAttendance.jsx";
 import CalculateSalary from "./pages/CalculateSalary.jsx";
 
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+
 
 function App() {
 
@@ -22,20 +23,44 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        
         <Route path="/signup" element={<SignUp />} />
+        
         <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/employees" element={<Employees />} />
-        <Route path="/salary" element={<Salary />} />
-        <Route path="/attendance" element={<Attendance />} />
-        <Route path="/view-attendance" element={<ViewAttendance />} />
-        <Route path="/add-attendance" element={<AddAttendance />} />
-        <Route path="/delete-attendance" element={<DeleteAttendance />} />
-        <Route path="/advance" element={<Advance />} />
-        <Route path="/add-advance" element={<AddAdvance />} />
-        <Route path="/view-advance" element={<ViewAdvance />} />
-        <Route path="/delete-advance" element={<DeleteAdvance />} />
-        <Route path="/calculate-salary" element={<CalculateSalary />} />
+        
+        <Route path="/dashboard" 
+        element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        
+        <Route path="/employees" 
+        element={<ProtectedRoute><Employees /></ProtectedRoute>} />
+      
+        <Route path="/attendance" 
+        element={<ProtectedRoute><Attendance /></ProtectedRoute>} />
+        
+        <Route path="/view-attendance" 
+        element={<ProtectedRoute><ViewAttendance /></ProtectedRoute>} />
+        
+        <Route path="/add-attendance" 
+        element={<ProtectedRoute><AddAttendance /></ProtectedRoute>} />
+        
+        <Route path="/delete-attendance" 
+        element={<ProtectedRoute><DeleteAttendance /></ProtectedRoute>} />
+        
+        <Route path="/advance" 
+        element={<ProtectedRoute><Advance /></ProtectedRoute>} />
+        
+        <Route path="/add-advance" 
+        element={<ProtectedRoute><AddAdvance /></ProtectedRoute>} />
+        
+        <Route path="/view-advance" 
+        element={<ProtectedRoute><ViewAdvance /></ProtectedRoute>} />
+        
+        <Route path="/delete-advance" 
+        element={<ProtectedRoute><DeleteAdvance /></ProtectedRoute>} />
+        
+        <Route path="/calculate-salary" 
+        element={<ProtectedRoute><CalculateSalary /></ProtectedRoute>} />
+      
       </Routes>
     </Router>
   )

@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import API from "../api/axios.js";
 
 export default function Employees() {
+  const navigate = useNavigate();
   const [employees, setEmployees] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
@@ -52,10 +54,6 @@ export default function Employees() {
 
     try {
       await API.delete(`/employees/${id}`);
-      
-      setEmployees((prevEmployees) =>
-      prevEmployees.filter((employee) => employee._id !== id)
-      );
       
       alert("Employee deleted successfully");
       fetchEmployees();
@@ -225,6 +223,12 @@ export default function Employees() {
             </tbody>
           </table>
         </div>
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="text-blue-600 underline text-sm hover:text-blue-800 mt-2 self-start"
+        >
+          ← Back
+        </button>
       </div>
     </div>
   );

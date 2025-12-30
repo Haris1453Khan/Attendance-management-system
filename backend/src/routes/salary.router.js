@@ -1,9 +1,11 @@
 import {Router} from 'express';
 import {calculateSalary} from '../controllers/salary.controller.js';
-import {fetchSalary} from '../controllers/salary.controller.js';
+import {protect} from '../middleware/authMiddleware.js';
 
 const router = Router();
 
-router.route('/').post(calculateSalary).get(fetchSalary);
+router.use(protect);
+
+router.route('/').post(calculateSalary);
 
 export default router;

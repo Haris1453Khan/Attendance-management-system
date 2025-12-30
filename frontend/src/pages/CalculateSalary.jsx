@@ -2,34 +2,25 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import API from "../api/axios.js";
 
-export default function ViewAttendance() {
+export default function CalculateSalary() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     month: "",
     name: "",
   });
 
-  const [salaryData, setSalaryData] = useState([]);
-
-  const handleCalculate = async () => {
-    try {
-      const { data } = await API.get("/salary", { params: formData });
-      if(data.exist){
-          setSalaryData(data);
-          alert("Salary Fetched successfully!");
-      }
-    } 
-    catch (error) {
-        if(error.response?.status === 404){
-             console.log("No salary exists, calculating now...");
-            calculateSalary(); // your function to POST & generate salary
-        } 
-        else {
-            console.error(error.response?.data?.message || "Error fetching salary", error);
-            alert(error.response?.data?.message || "Failed while fetching salary.");        
-        }
-    }
-  };
+  const [salaryData, setSalaryData] = useState({
+    employeeId: "",
+    month: "",
+    year: "",
+    presentDays: "",
+    absentDays: "",
+    halfDays: "",
+    extraDays: "",
+    bonuses: "",
+    advances: "",
+    netSalary: ""
+  });
 
   const calculateSalary = async () => {
     try{
@@ -80,7 +71,7 @@ export default function ViewAttendance() {
           {/* Calculate Button */}
           <div className="flex items-end w-full md:w-1/3">
             <button
-              onClick={handleCalculate}
+              onClick={calculateSalary}
               className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-all"
             >
               Calculate
@@ -110,7 +101,7 @@ export default function ViewAttendance() {
                
                   <tr key={salaryData._id} className="border-t hover:bg-gray-50">
                     <td className="px-4 py-2">{formData.name}</td>
-                    <td className="px-4 py-2">{salaryData.month}</td>
+                    <td className="px-4 py-2">{Number.isFinite(Number(salaryData.month)) ? Number(salaryData.month) + 1 : '-'}</td>
                     <td className="px-4 py-2">{salaryData.year}</td>
                     <td className="px-4 py-2">{salaryData.presentDays}</td>
                     <td className="px-4 py-2">{salaryData.absentDays}</td>

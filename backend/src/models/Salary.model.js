@@ -12,7 +12,8 @@ const salarySchema = new mongoose.Schema({
     extraDays:{type:Number , required:true , default:0},
     bonuses:{type:Number , required:true , default:0},
     advances:{type:Number , required:true , default:0},
-    netSalary:{type:Number , required:true}},
+    netSalary:{type:Number , required:true},
+    lastCalculatedAt:{type:Date , required:true}},
     {
         timestamps:true,
     }

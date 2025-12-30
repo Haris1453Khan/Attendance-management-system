@@ -69,7 +69,7 @@ export default function DeleteAttendance() {
           </button>
           <button
             onClick={() => navigate("/attendance")}
-            className="bg-gray-200 text-gray-700 py-2 px-6 rounded-lg hover:bg-gray-300 transition-all"
+            className="text-blue-600 underline text-sm hover:text-blue-800 mt-2 self-start"
           >
             ← Back
           </button>

@@ -15,6 +15,7 @@ export const addAdvance = async (req , res) => {
         };
 
         employee.advances.push(newAdvance);
+        employee.advancesUpdatedAt = new Date();
         await employee.save();
 
         return res.status(200).json({message:"Advance added Successfully"});
@@ -76,6 +77,7 @@ export const deleteAdvance = async (req , res) => {
             return res.status(404).json({message:"No advances found for this date"});
 
         employee.advances = newAdvances;
+        employee.advancesUpdatedAt = new Date();
         await employee.save();
 
         return res.status(200).json("Advance Deleted Sucessfully.");

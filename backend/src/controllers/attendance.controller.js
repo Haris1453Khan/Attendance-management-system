@@ -65,7 +65,6 @@ export const viewAttendance = async (req , res) => {
         return res.status(200).json(attendance);
     }
     catch(error){
-        console.log("view Attendance called");
         console.error("View attendance error:", error);
         return res.status(500).json({ message: "Server error, failed to fetch attendance." });
     }

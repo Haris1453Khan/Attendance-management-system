@@ -5,14 +5,14 @@ import Attendance from '../models/Attendance.model.js';
 export const calculateSalary = async (req , res) => {
     try{
         const {month , name} = req.body;
-
+        
         if(!month || !name)
             return res.status(404).json({message:"Plese enter all the required fields."});
 
         const employee = await Employee.findOne({name : name})
         if (!employee) 
             return res.status(404).json({ message: "Employee not found" });
-
+        
         const startDate = new Date(`${month}-01`);
         const monthIndex = startDate.getMonth();
         const year = startDate.getFullYear();
@@ -20,15 +20,37 @@ export const calculateSalary = async (req , res) => {
 
         const attendance = await Attendance.find({
             employeeId: employee._id,
-            date:{
-                $gte:startDate,
-                $lt:endDate
-            }
+            date: {$gte:startDate , $lt: endDate},
         })
-        if(attendance.length === 0){
-            return res.status(404).json({message:"No attendance found for this employee."});
-        }
+        
+        const latestAttendance = await Attendance.findOne({
+            employeeId: employee._id,
+            date: {$gte:startDate , $lt: endDate},
+        }).sort({updatedAt: -1});
 
+        let salary = await Salary.findOne({
+            employeeId : employee._id,
+            month : monthIndex,
+            year : year
+        })
+
+        if (salary && latestAttendance &&latestAttendance.updatedAt < salary.lastCalculatedAt && employee.advancesUpdatedAt < salary.lastCalculatedAt) {
+
+        return res.json({
+            exist: true,
+            employeeId: salary.employeeId,
+            month: salary.month,
+            year: salary.year,
+            presentDays: salary.presentDays,
+            absentDays: salary.absentDays,
+            halfDays: salary.halfDays,
+            extraDays: salary.extraDays,
+            bonuses: salary.bonuses,
+            advances: salary.advances,
+            netSalary: salary.netSalary
+        });
+        }
+        
         const monthlyAdvances = employee.advances.filter(
             (adv) => new Date(adv.date) >= startDate && new Date(adv.date) < endDate
         );
@@ -61,9 +83,9 @@ export const calculateSalary = async (req , res) => {
             }
 
             if(day === 0){
-                const prevDate = new Date(date);
+                let prevDate = new Date(date);
                 prevDate.set(date.getDate() - 1);
-                const nextDate = new Date(date);
+                let nextDate = new Date(date);
                 nextDate.set(date.getDate() + 1);
 
                 const prevStatus = attendanceMap.get(prevDate.toDateString());
@@ -82,78 +104,43 @@ export const calculateSalary = async (req , res) => {
         const perDaySalary = basicSalary / 30;
         const deductions = (absentDays * perDaySalary) + (halfDays * perDaySalary * 0.5) + advances + (unpaidSundays * perDaySalary);
         const extraSalary = (extraDays * perDaySalary) + bonuses ;
-        netSalary = basicSalary + extraSalary - deductions;
+        netSalary = (presentDays * perDaySalary) + extraSalary - deductions;
         const totalDays = presentDays + (halfDays/2) - absentDays - unpaidSundays;
 
-        const salary = await Salary.create({
-            employeeId : employee._id,
-            month: monthIndex,
-            year: year,
-            totalSalary: basicSalary,
-            totalDays: totalDays,
-            presentDays: presentDays,
-            absentDays: absentDays,
-            halfDays: halfDays,
-            extraDays: extraDays,
-            bonuses: bonuses,
-            advances: advances,
-            netSalary: netSalary
-        })
-
         if(!salary){
-            return res.status(400).json({message:"Error while Calculating Salary"});
+            salary = await Salary.create({
+                employeeId : employee._id,
+                month: monthIndex,
+                year: year,
+                totalSalary: basicSalary,
+                totalDays: totalDays,
+                presentDays: presentDays,
+                absentDays: absentDays,
+                halfDays: halfDays,
+                extraDays: extraDays,
+                bonuses: bonuses,
+                advances: advances,
+                netSalary: netSalary,
+                lastCalculatedAt: new Date(),
+            })
+        }
+        else{
+            salary.totalDays = totalDays,
+            salary.presentDays = presentDays,
+            salary.absentDays = absentDays,
+            salary.halfDays = halfDays,
+            salary.extraDays = extraDays,
+            salary.bonuses = bonuses,
+            salary.advances = advances,
+            salary.netSalary = netSalary,
+            salary.lastCalculatedAt = new Date(),
+            await salary.save();
         }
 
-        return res.status(200).json(salary);
-
+        res.json({message: "Salary calculated successfully",salary});
     }
     catch(error){
         console.error("Calculate Salary error:", error);
         return res.status(500).json({ message: "Server error, failed to calculate salary." });
-    }
-};
-
-export const fetchSalary = async (req , res) => {
-    try{
-        const {month , name} = req.query;
-        
-        if(!month || !name)
-            return res.status(404).json({message:"Plese enter all the required fields."});
-
-        const employee = await Employee.findOne({name : name})
-        if (!employee) 
-            return res.status(404).json({ message: "Employee not found" });
-
-        const date = new Date(month);
-        const monthNum = date.getMonth();
-        const year = date.getFullYear();
-
-        const isSalary = await Salary.findOne({
-            employeeId : employee._id,
-            month : monthNum,
-            year : year
-        })
-
-        if(!isSalary){
-            return res.status(404).json({exist:false , message:"No salary exist for this employee."})
-        }
-
-        res.json({
-            employeeId: isSalary.employeeId,
-            month: isSalary.month,
-            year: isSalary.year,
-            presentDays: isSalary.presentDays,
-            absentDays: isSalary.absentDays,
-            halfDays: isSalary.halfDays,
-            extraDays: isSalary.extraDays,
-            bonuses: isSalary.bonuses,
-            advances: isSalary.advances,
-            netSalary: isSalary.netSalary
-        });
-        
-    }
-    catch(error){
-        console.error("Fetch Salary error:", error);
-        return res.status(500).json({ message: "Server error, failed to fetch salary." });
     }
 };

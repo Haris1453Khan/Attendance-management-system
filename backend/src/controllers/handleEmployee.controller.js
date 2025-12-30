@@ -42,8 +42,8 @@ export const deleteEmployee = async (req , res) => {
 export const updateEmployee = async (req , res) => {
     try{
         const {id} = req.params;
-        const {name , phone , joinDate , baseSalary , isActive} = req.body;
-        const employee = await Employees.findById({_id:id});
+        const {name , phone , baseSalary , joinDate , isActive} = req.body;
+        const employee = await Employees.findById(id);
         
         if(!employee)
             return res.status(400).json({message:"Employee not Found."});
@@ -56,25 +56,25 @@ export const updateEmployee = async (req , res) => {
         if(isPhoneExist && (isPhoneExist._id != id))
             return res.status(400).json({message:"Please use different phone, This number already exist."});
 
-        const isUpdate = await Employees.updateOne({name , phone , joinDate , baseSalary , isActive});
+        const isUpdate = await Employees.updateOne({_id : id} , {name , phone , joinDate , baseSalary , isActive});
 
-        if(!isUpdate)
+        if(isUpdate.modifiedCount === 0)
             return res.status(400).json({message:"Unable to update Employee."});
 
         return res.status(200).json({message:"Employee Updated Successfully."})
 
     }
     catch(error){
-        res.status(500).json({message:"Unable to delete employee. Server error."});
+        res.status(500).json({message:"Unable to update employee. Server error."});
     }
 }
 
 export const fetchEmployee = async (req , res) => {
     try{
         const employees = await Employees.find();
-        if(!employees || employees.length === 0)
+        if(!employees)
             return res.status(400).json({message:"No Employee found, Please add Employees."});
-
+        
         return res.status(200).json(employees);
     }
     catch(error){

@@ -35,6 +35,13 @@ export default function Attendance() {
             Delete Attendance
           </button>
         </div>
+
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="text-blue-600 underline text-sm hover:text-blue-800 mt-2 self-start"
+        >
+          ← Back
+        </button>
       </div>
     </div>
   );
