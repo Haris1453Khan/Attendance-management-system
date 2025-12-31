@@ -9,23 +9,13 @@ export default function CalculateSalary() {
     name: "",
   });
 
-  const [salaryData, setSalaryData] = useState({
-    employeeId: "",
-    month: "",
-    year: "",
-    presentDays: "",
-    absentDays: "",
-    halfDays: "",
-    extraDays: "",
-    bonuses: "",
-    advances: "",
-    netSalary: ""
-  });
+  const [salaryData, setSalaryData] = useState(null);
 
   const calculateSalary = async () => {
     try{
         const { data } = await API.post("/salary", formData);
-        setSalaryData(data);
+        const salary = data.salary || data;
+        setSalaryData(salary);
         alert("Salary Calculated successfully!");
     }
     catch(error){

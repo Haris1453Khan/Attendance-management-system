@@ -83,29 +83,57 @@ export const calculateSalary = async (req , res) => {
             }
 
             if(day === 0){
-                let prevDate = new Date(date);
-                prevDate.set(date.getDate() - 1);
-                let nextDate = new Date(date);
-                nextDate.set(date.getDate() + 1);
-
-                const prevStatus = attendanceMap.get(prevDate.toDateString());
-                const nextStatus = attendanceMap.get(nextDate.toDateString());
-
-                if(prevStatus === "A" || nextStatus === "A") 
-                    unpaidSundays++;
-
+                
                 if(status === "P")
                     extraDays++;
             }
             bonuses += record.bonus || 0;
         })
 
+        const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+
+        for (let d = 1; d <= daysInMonth; d++) {
+            const date = new Date(year, monthIndex, d);
+
+            if (date.getDay() === 0) { // Sunday
+                const prev = new Date(date);
+                prev.setDate(d - 1);
+
+                const next = new Date(date);
+                next.setDate(d + 1);
+
+                const prevStatus = attendanceMap.get(prev.toDateString()) || "A";
+                const nextStatus = attendanceMap.get(next.toDateString()) || "A";
+
+                if (!(prevStatus === "P" && nextStatus === "P")) {
+                    unpaidSundays++;
+                }
+            }
+        }
+
+
+        if(absentDays === 0){
+            bonuses += 1000;
+        }
+
+        let workingDays = 0;
+
+        for (let d = 1; d <= daysInMonth; d++) {
+            const day = new Date(year, monthIndex, d).getDay();
+            if (day !== 0) workingDays++; // exclude Sundays
+        }
+
+        const attendedDays = presentDays + (halfDays * 0.5);
+
+        const missingDays = workingDays - presentDays - halfDays - absentDays;
+
+        const totalAbsentDays = absentDays + missingDays;
 
         const perDaySalary = basicSalary / 30;
-        const deductions = (absentDays * perDaySalary) + (halfDays * perDaySalary * 0.5) + advances + (unpaidSundays * perDaySalary);
+        const deductions = (totalAbsentDays * perDaySalary) + (halfDays * perDaySalary * 0.5) + advances + (unpaidSundays * perDaySalary);
         const extraSalary = (extraDays * perDaySalary) + bonuses ;
-        netSalary = (presentDays * perDaySalary) + extraSalary - deductions;
-        const totalDays = presentDays + (halfDays/2) - absentDays - unpaidSundays;
+        netSalary = basicSalary + extraSalary - deductions;
+        const totalDays = attendedDays - absentDays - unpaidSundays;
 
         if(!salary){
             salary = await Salary.create({
@@ -125,6 +153,7 @@ export const calculateSalary = async (req , res) => {
             })
         }
         else{
+            salary.totalSalary = basicSalary,
             salary.totalDays = totalDays,
             salary.presentDays = presentDays,
             salary.absentDays = absentDays,
