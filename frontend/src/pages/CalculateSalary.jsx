@@ -12,17 +12,25 @@ export default function CalculateSalary() {
   const [salaryData, setSalaryData] = useState(null);
 
   const calculateSalary = async () => {
-    try{
-        const { data } = await API.post("/salary", formData);
-        const salary = data.salary || data;
-        setSalaryData(salary);
+    try {
+      const { data } = await API.post("/salary", formData);
+      const salary = data.salary || data;
+      setSalaryData(salary);
+      if (data.message) {
+        alert(data.message);
+      } else {
         alert("Salary Calculated successfully!");
+      }
+    } catch (error) {
+      console.error(
+        error.response?.data?.message || "Error calculating salary",
+        error,
+      );
+      alert(
+        error.response?.data?.message || "Failed while calculating salary.",
+      );
     }
-    catch(error){
-        console.error(error.response?.data?.message || "Error calculating salary", error);
-        alert(error.response?.data?.message || "Failed while calculating salary."); 
-    }
-  }
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-100 justify-center items-center px-4">
@@ -35,11 +43,15 @@ export default function CalculateSalary() {
         <div className="w-full bg-gray-50 p-4 rounded-xl shadow-inner flex flex-col md:flex-row gap-4">
           {/* Month */}
           <div className="flex flex-col w-full md:w-1/3">
-            <label className="text-gray-700 font-medium mb-1">Select Month:</label>
+            <label className="text-gray-700 font-medium mb-1">
+              Select Month:
+            </label>
             <input
               type="month"
               value={formData.month}
-              onChange={(e) => setFormData({ ...formData, month: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, month: e.target.value })
+              }
               className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
               required
             />
@@ -47,12 +59,16 @@ export default function CalculateSalary() {
 
           {/* Employee Name */}
           <div className="flex flex-col w-full md:w-1/3">
-            <label className="text-gray-700 font-medium mb-1">Employee Name:</label>
+            <label className="text-gray-700 font-medium mb-1">
+              Employee Name:
+            </label>
             <input
               type="text"
               placeholder="Enter employee name"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
               required
             />
@@ -87,22 +103,24 @@ export default function CalculateSalary() {
               </tr>
             </thead>
             <tbody>
-              {salaryData? (
-               
-                  <tr key={salaryData._id} className="border-t hover:bg-gray-50">
-                    <td className="px-4 py-2">{formData.name}</td>
-                    <td className="px-4 py-2">{Number.isFinite(Number(salaryData.month)) ? Number(salaryData.month) + 1 : '-'}</td>
-                    <td className="px-4 py-2">{salaryData.year}</td>
-                    <td className="px-4 py-2">{salaryData.presentDays}</td>
-                    <td className="px-4 py-2">{salaryData.absentDays}</td>
-                    <td className="px-4 py-2">{salaryData.halfDays}</td>
-                    <td className="px-4 py-2">{salaryData.extraDays}</td>
-                    <td className="px-4 py-2">{salaryData.bonuses}</td>
-                    <td className="px-4 py-2">{salaryData.advances}</td>
-                    <td className="px-4 py-2">{salaryData.netSalary}</td>
-                  </tr>
-                
-                ) : (
+              {salaryData ? (
+                <tr key={salaryData._id} className="border-t hover:bg-gray-50">
+                  <td className="px-4 py-2">{formData.name}</td>
+                  <td className="px-4 py-2">
+                    {Number.isFinite(Number(salaryData.month))
+                      ? Number(salaryData.month) + 1
+                      : "-"}
+                  </td>
+                  <td className="px-4 py-2">{salaryData.year}</td>
+                  <td className="px-4 py-2">{salaryData.presentDays}</td>
+                  <td className="px-4 py-2">{salaryData.absentDays}</td>
+                  <td className="px-4 py-2">{salaryData.halfDays}</td>
+                  <td className="px-4 py-2">{salaryData.extraDays}</td>
+                  <td className="px-4 py-2">{salaryData.bonuses}</td>
+                  <td className="px-4 py-2">{salaryData.advances}</td>
+                  <td className="px-4 py-2">{salaryData.netSalary}</td>
+                </tr>
+              ) : (
                 <tr>
                   <td colSpan="9" className="text-center py-4 text-gray-500">
                     No calculations.
