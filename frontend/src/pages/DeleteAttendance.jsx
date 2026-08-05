@@ -1,80 +1,102 @@
-import { useState } from 'react';
-import API from '../api/axios.js';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import API from "../api/axios.js";
+import { useNavigate } from "react-router-dom";
+import Layout from "../components/Layout.jsx";
+import Card from "../components/ui/Card.jsx";
+import Button from "../components/ui/Button.jsx";
+import Input from "../components/ui/Input.jsx";
+import { Trash2, Calendar, User, ArrowLeft } from "lucide-react";
 
 export default function DeleteAttendance() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     date: "",
-    name: ""
+    name: "",
   });
+  const [loading, setLoading] = useState(false);
 
-  const handleDelete = async () => {
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    if (!formData.date || !formData.name) {
+      alert("Please fill in both Date and Employee Name.");
+      return;
+    }
+    if (!window.confirm("Are you sure you want to delete this attendance record?")) {
+      return;
+    }
     try {
-      await API.delete('/attendance', { params : formData });
-      alert("Attendance deleted Successfully.");
-      setFormData({
-        date: "",
-        name: ""
-      });
+      setLoading(true);
+      await API.delete("/attendance", { params: formData });
+      alert("Attendance deleted successfully.");
+      setFormData({ date: "", name: "" });
     } catch (error) {
       console.error("Failed to delete attendance.", error);
       alert(error.response?.data?.message || "Failed to delete attendance");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100 justify-center items-center px-4">
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-4xl flex flex-col gap-6">
-        <h1 className="text-2xl font-bold text-gray-800 text-center">
-            Delete Attendance
-        </h1>
+    <Layout title="Delete Attendance Entry">
+      <div className="max-w-2xl mx-auto space-y-6">
+        <Card className="p-8">
+          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#332F3A]/10">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#F87171] to-[#EF4444] flex items-center justify-center text-white shadow-clay-button">
+              <Trash2 className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold font-heading text-[#332F3A]">
+                Remove Attendance Log
+              </h3>
+              <p className="text-xs font-semibold text-[#635F69]">
+                Specify date and employee name to erase record
+              </p>
+            </div>
+          </div>
 
-        {/* Filter Section */}
-        <div className="w-full bg-gray-50 p-4 rounded-xl shadow-inner flex flex-col md:flex-row flex-wrap gap-4">
-          {/* Date */}
-          <div className="flex flex-col w-full md:w-1/3">
-            <label className="text-gray-700 font-medium mb-1">Enter Date:</label>
-            <input
+          <form onSubmit={handleDelete} className="space-y-6">
+            <Input
+              label="Select Date"
+              icon={Calendar}
               type="date"
               value={formData.date}
               onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
               required
             />
-          </div>
 
-          {/* Employee Name */}
-          <div className="flex flex-col w-full md:w-1/3">
-            <label className="text-gray-700 font-medium mb-1">Employee Name:</label>
-            <input
+            <Input
+              label="Employee Name"
+              icon={User}
               type="text"
-              placeholder="Enter employee name"
+              placeholder="Enter exact employee name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
               required
             />
-          </div>
 
-        </div>
+            <div className="flex items-center justify-between pt-4 border-t border-[#332F3A]/10">
+              <Button
+                variant="secondary"
+                onClick={() => navigate("/attendance")}
+                className="gap-2"
+              >
+                <ArrowLeft className="w-4 h-4" /> Back to Actions
+              </Button>
 
-        {/* Centered Buttons */}
-        <div className="flex justify-center gap-4">
-          <button
-            onClick={handleDelete}
-            className="bg-red-500 text-white py-2 px-6 rounded-lg hover:bg-red-600 transition-all"
-          >
-            Delete
-          </button>
-          <button
-            onClick={() => navigate("/attendance")}
-            className="text-blue-600 underline text-sm hover:text-blue-800 mt-2 self-start"
-          >
-            ← Back
-          </button>
-        </div>
+              <Button
+                type="submit"
+                variant="danger"
+                size="lg"
+                disabled={loading}
+                className="gap-2"
+              >
+                <Trash2 className="w-5 h-5" /> {loading ? "Deleting..." : "Delete Entry"}
+              </Button>
+            </div>
+          </form>
+        </Card>
       </div>
-    </div>
+    </Layout>
   );
 }

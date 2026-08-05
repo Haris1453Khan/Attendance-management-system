@@ -1,1 +1,126 @@
-@import 'tailwindcss';
+@import "tailwindcss";
+
+:root {
+  --clay-canvas: #F4F1FA;
+  --clay-foreground: #332F3A;
+  --clay-muted: #635F69;
+  --clay-accent: #7C3AED;
+  --clay-accent-secondary: #DB2777;
+  --clay-tertiary: #0EA5E9;
+  --clay-success: #10B981;
+  --clay-warning: #F59E0B;
+}
+
+body {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--clay-canvas);
+  color: var(--clay-foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: 'Nunito', sans-serif;
+}
+
+/* Custom Clay Multi-Layer Shadows */
+.shadow-clay-deep {
+  box-shadow: 
+    30px 30px 60px #cdc6d9,
+    -30px -30px 60px #ffffff,
+    inset 10px 10px 20px rgba(139, 92, 246, 0.05),
+    inset -10px -10px 20px rgba(255, 255, 255, 0.8);
+}
+
+.shadow-clay-card {
+  box-shadow: 
+    16px 16px 32px rgba(160, 150, 180, 0.2),
+    -10px -10px 24px rgba(255, 255, 255, 0.9),
+    inset 6px 6px 12px rgba(139, 92, 246, 0.03),
+    inset -6px -6px 12px rgba(255, 255, 255, 1);
+}
+
+.shadow-clay-button {
+  box-shadow: 
+    12px 12px 24px rgba(139, 92, 246, 0.28),
+    -8px -8px 16px rgba(255, 255, 255, 0.5),
+    inset 4px 4px 8px rgba(255, 255, 255, 0.4),
+    inset -4px -4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.shadow-clay-button-hover {
+  box-shadow: 
+    16px 16px 28px rgba(139, 92, 246, 0.35),
+    -10px -10px 20px rgba(255, 255, 255, 0.7),
+    inset 4px 4px 8px rgba(255, 255, 255, 0.5),
+    inset -4px -4px 8px rgba(0, 0, 0, 0.12);
+}
+
+.shadow-clay-pressed {
+  box-shadow: 
+    inset 8px 8px 16px #d4cedf,
+    inset -8px -8px 16px #ffffff;
+}
+
+.shadow-clay-sm {
+  box-shadow: 
+    8px 8px 16px rgba(160, 150, 180, 0.15),
+    -6px -6px 14px rgba(255, 255, 255, 0.8);
+}
+
+/* Animations */
+@keyframes clayFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(2deg); }
+}
+
+@keyframes clayFloatDelayed {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(-2deg); }
+}
+
+@keyframes clayBreathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+.animate-clay-float {
+  animation: clayFloat 8s ease-in-out infinite;
+}
+
+.animate-clay-float-delayed {
+  animation: clayFloatDelayed 10s ease-in-out infinite 2s;
+}
+
+.animate-clay-breathe {
+  animation: clayBreathe 6s ease-in-out infinite;
+}
+
+/* Smooth custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F4F1FA;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c7bed8;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a89bc2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-clay-float,
+  .animate-clay-float-delayed,
+  .animate-clay-breathe {
+    animation: none !important;
+  }
+}
+

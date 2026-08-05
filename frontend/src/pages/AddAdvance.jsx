@@ -1,6 +1,11 @@
-import { useState } from 'react';
-import API from '../api/axios.js';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import API from "../api/axios.js";
+import { useNavigate } from "react-router-dom";
+import Layout from "../components/Layout.jsx";
+import Card from "../components/ui/Card.jsx";
+import Button from "../components/ui/Button.jsx";
+import Input from "../components/ui/Input.jsx";
+import { Wallet, Calendar, User, DollarSign, ArrowLeft } from "lucide-react";
 
 export default function AddAdvance() {
   const navigate = useNavigate();
@@ -8,101 +13,109 @@ export default function AddAdvance() {
     date: "",
     name: "",
     amount: "",
-    note: ""
+    note: "",
   });
+  const [loading, setLoading] = useState(false);
 
-  const handleAdd = async () => {
+  const handleAdd = async (e) => {
+    e.preventDefault();
+    if (!formData.date || !formData.name || !formData.amount) {
+      alert("Please fill in all required fields.");
+      return;
+    }
     try {
-      await API.post('/advance', formData);
-      alert("Advance added Successfully.");
-      setFormData({
-        date: "",
-        name: "",
-        amount: "",
-        note: ""
-      });
+      setLoading(true);
+      await API.post("/advance", formData);
+      alert("Advance added successfully.");
+      setFormData({ date: "", name: "", amount: "", note: "" });
+      navigate("/advance");
     } catch (error) {
       console.error("Failed to add advance.", error);
       alert(error.response?.data?.message || "Failed to add advance");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100 justify-center items-center px-4">
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-4xl flex flex-col gap-6">
-        <h1 className="text-2xl font-bold text-gray-800 text-center">
-          Add Advance
-        </h1>
-
-        {/* Filter Section */}
-        <div className="w-full bg-gray-50 p-4 rounded-xl shadow-inner flex flex-col md:flex-row flex-wrap gap-4">
-          {/* Date */}
-          <div className="flex flex-col w-full md:w-1/3">
-            <label className="text-gray-700 font-medium mb-1">Enter Date:</label>
-            <input
-              type="date"
-              value={formData.date}
-              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-              required
-            />
+    <Layout title="Issue Salary Advance">
+      <div className="max-w-3xl mx-auto space-y-6">
+        <Card className="p-8">
+          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#332F3A]/10">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#34D399] to-[#059669] flex items-center justify-center text-white shadow-clay-button">
+              <Wallet className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold font-heading text-[#332F3A]">
+                Record New Advance Payment
+              </h3>
+              <p className="text-xs font-semibold text-[#635F69]">
+                Log an advance issued to an employee to deduct from monthly payroll
+              </p>
+            </div>
           </div>
 
-          {/* Employee Name */}
-          <div className="flex flex-col w-full md:w-1/3">
-            <label className="text-gray-700 font-medium mb-1">Employee Name:</label>
-            <input
-              type="text"
-              placeholder="Enter employee name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-              required
-            />
-          </div>
+          <form onSubmit={handleAdd} className="space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <Input
+                label="Date Issued"
+                icon={Calendar}
+                type="date"
+                value={formData.date}
+                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                required
+              />
 
-          {/* Amount */}
-          <div className="flex flex-col w-full md:w-1/3">
-            <label className="text-gray-700 font-medium mb-1">Enter Amount:</label>
-            <input
-              type="number"
-              placeholder="00"
-              value={formData.amount}
-              onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-              className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-              required
-            />
-          </div>
+              <Input
+                label="Employee Name"
+                icon={User}
+                type="text"
+                placeholder="Full employee name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
+              />
 
-          {/* Note */}
-          <div className="flex flex-col w-full md:w-1/3">
-            <label className="text-gray-700 font-medium mb-1">Note:</label>
-            <input
-              type="text"
-              placeholder="Enter Note(if any)"
-              value={formData.note}
-              onChange={(e) => setFormData({ ...formData, note: e.target.value })}
-              className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-            />
-          </div>
-        </div>
+              <Input
+                label="Advance Amount (₹)"
+                icon={DollarSign}
+                type="number"
+                placeholder="Amount in INR"
+                value={formData.amount}
+                onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                required
+              />
 
-        {/* Centered Buttons */}
-        <div className="flex justify-center gap-4">
-          <button
-            onClick={handleAdd}
-            className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition-all"
-          >
-            Add
-          </button>
-          <button
-            onClick={() => navigate("/advance")}
-            className="bg-gray-200 text-gray-700 py-2 px-6 rounded-lg hover:bg-gray-300 transition-all"
-          >
-            ← Back
-          </button>
-        </div>
+              <Input
+                label="Note (Optional)"
+                type="text"
+                placeholder="Reason or reference..."
+                value={formData.note}
+                onChange={(e) => setFormData({ ...formData, note: e.target.value })}
+              />
+            </div>
+
+            <div className="flex items-center justify-between pt-4 border-t border-[#332F3A]/10">
+              <Button
+                variant="secondary"
+                onClick={() => navigate("/advance")}
+                className="gap-2"
+              >
+                <ArrowLeft className="w-4 h-4" /> Back to Actions
+              </Button>
+
+              <Button
+                type="submit"
+                variant="primary"
+                size="lg"
+                disabled={loading}
+              >
+                {loading ? "Recording..." : "Record Advance"}
+              </Button>
+            </div>
+          </form>
+        </Card>
       </div>
-    </div>
+    </Layout>
   );
 }

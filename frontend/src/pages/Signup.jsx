@@ -1,166 +1,163 @@
 import { useState } from "react";
-import API from "../api/axios.js";
-import {useNavigate} from "react-router-dom";
+import API, { setAccessToken } from "../api/axios.js";
+import { useNavigate } from "react-router-dom";
+import { User, Mail, Lock, Shield, ArrowRight, Sparkles } from "lucide-react";
+import BlobBackground from "../components/ui/BlobBackground";
+import Button from "../components/ui/Button";
+import Card from "../components/ui/Card";
+import Input, { Select } from "../components/ui/Input";
 
 export default function SignUp() {
-    const navigate = useNavigate();
-    const [formData, setFormData] = useState({
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
-    role: "user", // Default role
+    role: "user",
   });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  const [loading , setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
-    
-    // TODO: send formData to backend API
-    console.log("Signup data:", formData);
-    try{
-        setLoading(true);
-        const {data} = await API.post('/user/register' , {
-            username: formData.username,
-            email: formData.email,
-            password: formData.password,
-            role: formData.role
-        });
-    localStorage.setItem('token', data.token);
-    alert("Signup successful!");
+
+    try {
+      setLoading(true);
+      const { data } = await API.post("/user/register", {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+      });
+      setAccessToken(data.token);
+      alert("Signup successful!");
+      navigate("/dashboard");
     } catch (error) {
-        alert(error.response?.data?.message || "Signup failed!");
+      alert(error.response?.data?.message || "Signup failed!");
     } finally {
-        setLoading (false);
+      setLoading(false);
     }
-}
+  };
 
   return (
-    <div className="flex min-h-screen bg-gray-100 justify-center items-center px-4">
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md flex flex-col gap-6">
-        {/* Title */}
-        <h1 className="text-3xl font-bold text-gray-800 text-center">
-          Create Account
-        </h1>
+    <div className="min-h-screen flex items-center justify-center bg-[#F4F1FA] text-[#332F3A] px-4 py-12 relative overflow-hidden">
+      <BlobBackground />
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          {/* Full Name */}
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">User Name</label>
-            <input
+      <div className="w-full max-w-md relative z-10">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-3xl bg-gradient-to-br from-[#A78BFA] to-[#7C3AED] text-white shadow-clay-button mb-4">
+            <Sparkles className="w-8 h-8" />
+          </div>
+          <h1 className="text-4xl font-black font-heading tracking-tight text-[#332F3A]">
+            Create Account
+          </h1>
+          <p className="text-[#635F69] font-medium text-base mt-1">
+            Join Haazri Lagao to manage your team
+          </p>
+        </div>
+
+        <Card className="p-8">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Input
+              label="Username"
+              icon={User}
               type="text"
               name="username"
               value={formData.username}
               onChange={handleChange}
-              placeholder="John Doe"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+              placeholder="Enter your username"
               required
             />
-          </div>
 
-          {/* Email */}
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">Email</label>
-            <input
+            <Input
+              label="Email"
+              icon={Mail}
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               placeholder="you@example.com"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
               required
             />
-          </div>
 
-          {/* Password */}
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">Password</label>
-            <input
+            <Input
+              label="Password"
+              icon={Lock}
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
               placeholder="••••••••"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
               required
             />
-          </div>
 
-          {/* Confirm Password */}
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">
-              Confirm Password
-            </label>
-            <input
+            <Input
+              label="Confirm Password"
+              icon={Lock}
               type="password"
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
               placeholder="••••••••"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
               required
             />
-          </div>
 
-          {/* Role Dropdown */}
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">Role</label>
-            <select
+            <Select
+              label="Role"
               name="role"
               value={formData.role}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
             >
               <option value="user">User</option>
               <option value="admin">Admin</option>
-            </select>
+            </Select>
+
+            <Button
+              type="submit"
+              disabled={loading}
+              variant="primary"
+              size="lg"
+              className="w-full mt-2"
+            >
+              {loading ? (
+                "Creating account..."
+              ) : (
+                <>
+                  Create Account <ArrowRight className="w-5 h-5 ml-1" />
+                </>
+              )}
+            </Button>
+          </form>
+
+          <div className="mt-8 text-center pt-6 border-t border-[#332F3A]/10">
+            <p className="text-[#635F69] text-sm font-medium">
+              Already have an account?{" "}
+              <button
+                onClick={() => navigate("/login")}
+                className="text-[#7C3AED] font-bold font-heading hover:underline"
+              >
+                Log In
+              </button>
+            </p>
           </div>
+        </Card>
 
-          {/* Submit Button */}
+        <div className="mt-6 text-center">
           <button
-            type="submit"
-            disabled={loading}
-            className={`w-full font-semibold py-3 rounded-xl shadow-md transition duration-200 ${
-                        loading
-                          ? "bg-blue-400 cursor-not-allowed"
-                          : "bg-blue-600 hover:bg-blue-700 text-white"
-                      }`}
+            onClick={() => navigate("/")}
+            className="text-[#635F69] hover:text-[#332F3A] text-sm font-bold font-heading transition"
           >
-            {loading ? "Signing Up..." : "Sign Up"}
-          </button>
-        </form>
-
-        {/* Footer */}
-        <div className="text-center text-sm text-gray-600 mt-4">
-          Already have an account?{" "}
-          <button
-            onClick={() => navigate("/login")}
-            className="text-blue-600 font-semibold hover:underline"
-          >
-            Log In
+            ← Back to Home
           </button>
         </div>
-
-        {/* Back Button */}
-        <button
-          onClick={() => navigate("/")}
-          className="text-blue-600 underline text-sm hover:text-blue-800 mt-4 self-center"
-        >
-          ← Back
-        </button>
       </div>
     </div>
   );

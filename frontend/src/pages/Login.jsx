@@ -1,76 +1,111 @@
-import API from '../api/axios';
-import { useState } from 'react';
-import {useNavigate} from 'react-router-dom';
+import API, { setAccessToken } from "../api/axios";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Lock, User, ArrowRight, Sparkles } from "lucide-react";
+import BlobBackground from "../components/ui/BlobBackground";
+import Button from "../components/ui/Button";
+import Card from "../components/ui/Card";
+import Input from "../components/ui/Input";
 
-function LoginPage() {
+export default function LoginPage() {
   const navigate = useNavigate();
-  const [username , setUsername] = useState('');
-  const [password , setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try{
-      const {data} = await API.post("/user/login" , {username , password});
-      localStorage.setItem("token" , data.token);
-      console.log(data);
-      alert("login Successfully..");
+    setLoading(true);
+    try {
+      const { data } = await API.post("/user/login", { username, password });
+      setAccessToken(data.token);
+      alert("Login successful!");
       navigate("/dashboard");
-    }catch(err){
-      alert(err.response?.data?.message || "Login Failed..");
+    } catch (err) {
+      alert(err.response?.data?.message || "Login failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-300">
-      {/* Card container */}
-      <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-lg w-full max-w-md mx-4">
-        <h1 className="text-2xl font-bold mb-6 text-center">Login Page</h1>
+    <div className="min-h-screen flex items-center justify-center bg-[#F4F1FA] text-[#332F3A] px-4 relative overflow-hidden">
+      <BlobBackground />
 
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          {/* Username */}
-          <div>
-            <label className="block text-gray-700 mb-1">Username</label>
-            <input
-              value={username}
-              onChange = { (e) => { setUsername(e.target.value) } }
+      <div className="w-full max-w-md relative z-10 my-8">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-3xl bg-gradient-to-br from-[#A78BFA] to-[#7C3AED] text-white shadow-clay-button mb-4">
+            <Sparkles className="w-8 h-8" />
+          </div>
+          <h1 className="text-4xl font-black font-heading tracking-tight text-[#332F3A]">
+            Welcome Back
+          </h1>
+          <p className="text-[#635F69] font-medium text-base mt-1">
+            Sign in to access your Haazri dashboard
+          </p>
+        </div>
+
+        <Card className="p-8">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <Input
+              label="Username"
+              icon={User}
               type="text"
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter your username"
+              required
             />
-          </div>
 
-          {/* Password */}
-          <div>
-            <label className="block text-gray-700 mb-1">Password</label>
-            <input
-              value={ password }
-              onChange={ (e) => { setPassword(e.target.value) } }
+            <Input
+              label="Password"
+              icon={Lock}
               type="password"
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
+              required
             />
-          </div>
 
-          {/* Button */}
+            <Button
+              type="submit"
+              disabled={loading}
+              variant="primary"
+              size="lg"
+              className="w-full mt-2"
+            >
+              {loading ? (
+                "Signing in..."
+              ) : (
+                <>
+                  Sign In <ArrowRight className="w-5 h-5 ml-1" />
+                </>
+              )}
+            </Button>
+          </form>
+
+          <div className="mt-8 text-center pt-6 border-t border-[#332F3A]/10">
+            <p className="text-[#635F69] text-sm font-medium">
+              Don't have an account?{" "}
+              <button
+                onClick={() => navigate("/signup")}
+                className="text-[#7C3AED] font-bold font-heading hover:underline"
+              >
+                Sign Up
+              </button>
+            </p>
+          </div>
+        </Card>
+
+        <div className="mt-6 text-center">
           <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+            onClick={() => navigate("/")}
+            className="text-[#635F69] hover:text-[#332F3A] text-sm font-bold font-heading transition"
           >
-            Login
-          </button>
-        </form>
-        <div className="text-center text-sm text-gray-600 mt-4">
-          Do not have an account?{" "}
-          <button
-            onClick={() => navigate("/signup")}
-            className="text-blue-600 font-semibold hover:underline"
-          >
-            Sign Up
+            ← Back to Home
           </button>
         </div>
       </div>
     </div>
-  )
+  );
 }
-
-export default LoginPage;

@@ -1,144 +1,188 @@
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import API from "../api/axios.js";
+import Layout from "../components/Layout.jsx";
+import Card from "../components/ui/Card.jsx";
+import Button from "../components/ui/Button.jsx";
+import Input from "../components/ui/Input.jsx";
+import Badge from "../components/ui/Badge.jsx";
+import { Printer, Calculator, Calendar, User, DollarSign } from "lucide-react";
 
 export default function CalculateSalary() {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    month: "",
-    name: "",
-  });
-
+  const [formData, setFormData] = useState({ month: "", name: "" });
   const [salaryData, setSalaryData] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const calculateSalary = async () => {
+    if (!formData.month || !formData.name) {
+      alert("Please select a month and enter an employee name.");
+      return;
+    }
     try {
+      setLoading(true);
       const { data } = await API.post("/salary", formData);
-      const salary = data.salary || data;
-      setSalaryData(salary);
-      if (data.message) {
-        alert(data.message);
-      } else {
-        alert("Salary Calculated successfully!");
-      }
+      setSalaryData(data.salary || data);
+      alert("Salary calculated successfully!");
     } catch (error) {
-      console.error(
-        error.response?.data?.message || "Error calculating salary",
-        error,
-      );
-      alert(
-        error.response?.data?.message || "Failed while calculating salary.",
-      );
+      alert(error.response?.data?.message || "Failed to calculate salary");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100 justify-center items-center px-4">
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-4xl flex flex-col gap-6">
-        <h1 className="text-2xl font-bold text-gray-800 text-center">
-          Calculate Salary
-        </h1>
+    <Layout title="Payroll & Salary Calculator">
+      <style>{`
+        @media print {
+          body * { visibility: hidden; }
+          .print-area, .print-area * { visibility: visible; }
+          .print-area { position: absolute; left: 0; top: 0; width: 100%; }
+          .no-print { display: none !important; }
+        }
+      `}</style>
 
-        {/* Filter Section */}
-        <div className="w-full bg-gray-50 p-4 rounded-xl shadow-inner flex flex-col md:flex-row gap-4">
-          {/* Month */}
-          <div className="flex flex-col w-full md:w-1/3">
-            <label className="text-gray-700 font-medium mb-1">
-              Select Month:
-            </label>
-            <input
+      <div className="space-y-6">
+        {/* Calculation Control Form Card */}
+        <Card className="p-6 sm:p-8 no-print">
+          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#332F3A]/10">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#34D399] to-[#059669] flex items-center justify-center text-white shadow-clay-button">
+              <Calculator className="w-5 h-5" />
+            </div>
+            <h3 className="text-xl font-bold font-heading text-[#332F3A]">
+              Monthly Payroll Engine
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <Input
+              label="Select Month"
+              icon={Calendar}
               type="month"
               value={formData.month}
               onChange={(e) =>
                 setFormData({ ...formData, month: e.target.value })
               }
-              className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
               required
             />
-          </div>
 
-          {/* Employee Name */}
-          <div className="flex flex-col w-full md:w-1/3">
-            <label className="text-gray-700 font-medium mb-1">
-              Employee Name:
-            </label>
-            <input
+            <Input
+              label="Employee Name"
+              icon={User}
               type="text"
               placeholder="Enter employee name"
               value={formData.name}
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
-              className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
               required
             />
-          </div>
 
-          {/* Calculate Button */}
-          <div className="flex items-end w-full md:w-1/3">
-            <button
-              onClick={calculateSalary}
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-all"
+            <div className="flex items-end">
+              <Button
+                onClick={calculateSalary}
+                variant="primary"
+                disabled={loading}
+                className="w-full gap-2"
+              >
+                <Calculator className="w-5 h-5" />{" "}
+                {loading ? "Calculating..." : "Compute Salary"}
+              </Button>
+            </div>
+          </div>
+        </Card>
+
+        {/* Print Action Bar */}
+        {salaryData && (
+          <div className="flex justify-end no-print">
+            <Button
+              onClick={() => window.print()}
+              variant="success"
+              className="gap-2"
             >
-              Calculate
-            </button>
+              <Printer className="w-5 h-5" /> Print Payslip
+            </Button>
           </div>
-        </div>
+        )}
 
-        {/* Attendance Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full border border-gray-200 rounded-lg overflow-hidden">
-            <thead className="bg-gray-200 text-gray-700">
-              <tr>
-                <th className="px-4 py-2 text-left">Employee</th>
-                <th className="px-4 py-2 text-left">Month</th>
-                <th className="px-4 py-2 text-left">Year</th>
-                <th className="px-4 py-2 text-left">Present</th>
-                <th className="px-4 py-2 text-left">Absent</th>
-                <th className="px-4 py-2 text-left">Half Day</th>
-                <th className="px-4 py-2 text-left">Extra Day</th>
-                <th className="px-4 py-2 text-left">Bonus</th>
-                <th className="px-4 py-2 text-left">Advance</th>
-                <th className="px-4 py-2 text-left">Salary</th>
-              </tr>
-            </thead>
-            <tbody>
-              {salaryData ? (
-                <tr key={salaryData._id} className="border-t hover:bg-gray-50">
-                  <td className="px-4 py-2">{formData.name}</td>
-                  <td className="px-4 py-2">
-                    {Number.isFinite(Number(salaryData.month))
-                      ? Number(salaryData.month) + 1
-                      : "-"}
-                  </td>
-                  <td className="px-4 py-2">{salaryData.year}</td>
-                  <td className="px-4 py-2">{salaryData.presentDays}</td>
-                  <td className="px-4 py-2">{salaryData.absentDays}</td>
-                  <td className="px-4 py-2">{salaryData.halfDays}</td>
-                  <td className="px-4 py-2">{salaryData.extraDays}</td>
-                  <td className="px-4 py-2">{salaryData.bonuses}</td>
-                  <td className="px-4 py-2">{salaryData.advances}</td>
-                  <td className="px-4 py-2">{salaryData.netSalary}</td>
-                </tr>
-              ) : (
-                <tr>
-                  <td colSpan="9" className="text-center py-4 text-gray-500">
-                    No calculations.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+        {/* Salary Result Breakdown Card */}
+        <Card className="print-area p-6 sm:p-8">
+          <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#332F3A]/10">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#A78BFA] to-[#7C3AED] flex items-center justify-center text-white shadow-clay-button">
+                <DollarSign className="w-5 h-5" />
+              </div>
+              <h3 className="text-xl font-bold font-heading text-[#332F3A]">
+                Salary Breakdown
+              </h3>
+            </div>
+          </div>
 
-        {/* Back Button */}
-        <button
-          onClick={() => navigate("/dashboard")}
-          className="text-blue-600 underline text-sm hover:text-blue-800 mt-2 self-start"
-        >
-          ← Back
-        </button>
+          <div className="overflow-x-auto rounded-2xl bg-[#EFEBF5]/60 p-1 shadow-clay-pressed">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-[#332F3A]/10 text-xs font-black uppercase tracking-wider text-[#635F69] font-heading">
+                  <th className="py-4 px-4">Employee</th>
+                  <th className="py-4 px-4">Month</th>
+                  <th className="py-4 px-4">Year</th>
+                  <th className="py-4 px-4">Present</th>
+                  <th className="py-4 px-4">Absent</th>
+                  <th className="py-4 px-4">Half Day</th>
+                  <th className="py-4 px-4">Extra Day</th>
+                  <th className="py-4 px-4">Bonus</th>
+                  <th className="py-4 px-4">Advance</th>
+                  <th className="py-4 px-4">Net Salary</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#332F3A]/5 text-sm font-medium text-[#332F3A]">
+                {salaryData ? (
+                  <tr className="hover:bg-white/80 transition-colors">
+                    <td className="py-4 px-4 font-bold font-heading text-[#332F3A]">
+                      {formData.name}
+                    </td>
+                    <td className="py-4 px-4 font-bold text-[#7C3AED]">
+                      {Number(salaryData.month) + 1}
+                    </td>
+                    <td className="py-4 px-4 text-[#635F69]">
+                      {salaryData.year}
+                    </td>
+                    <td className="py-4 px-4 font-semibold text-emerald-600">
+                      {salaryData.presentDays}
+                    </td>
+                    <td className="py-4 px-4 font-semibold text-red-500">
+                      {salaryData.absentDays}
+                    </td>
+                    <td className="py-4 px-4 font-semibold text-amber-600">
+                      {salaryData.halfDays}
+                    </td>
+                    <td className="py-4 px-4 text-[#635F69]">
+                      {salaryData.extraDays}
+                    </td>
+                    <td className="py-4 px-4 font-bold text-[#10B981]">
+                      ₹{salaryData.bonuses}
+                    </td>
+                    <td className="py-4 px-4 font-bold text-[#F59E0B]">
+                      ₹{salaryData.advances}
+                    </td>
+                    <td className="py-4 px-4">
+                      <Badge variant="success" className="text-sm py-1.5 px-4 font-black">
+                        ₹{salaryData.netSalary}
+                      </Badge>
+                    </td>
+                  </tr>
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="10"
+                      className="text-center py-8 text-[#635F69] font-medium"
+                    >
+                      No salary calculation yet. Select a month & employee above to compute.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </Card>
       </div>
-    </div>
+    </Layout>
   );
 }

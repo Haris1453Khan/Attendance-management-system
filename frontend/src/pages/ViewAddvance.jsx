@@ -1,126 +1,149 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import API from "../api/axios.js";
+import Layout from "../components/Layout.jsx";
+import Card from "../components/ui/Card.jsx";
+import Button from "../components/ui/Button.jsx";
+import Input from "../components/ui/Input.jsx";
+import { Search, Calendar, User, ArrowLeft } from "lucide-react";
 
 export default function ViewAdvance() {
-    const navigate = useNavigate();
-      const [formData, setFormData] = useState({
-        month: "",
-        name: "",
-      });
-    
-      const [advance, setAdvance] = useState([]);
-    
-      // ✅ Correct API Request for GET with params
-      const handleSearch = async () => {
-        try {
-          const { data } = await API.get("/advance", { params: formData });
-          setAdvance(data);
-          console.log(data);
-          alert(data.message || "Advance fetched successfully!");
-        } catch (error) {
-          console.error(error.response?.data?.message || "Error fetching advance", error);
-          alert(error.response?.data?.message || "Failed while fetching advance.");
-        }
-      };
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    month: "",
+    name: "",
+  });
+  const [advance, setAdvance] = useState([]);
 
-      const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const year = date.getFullYear();
-        return `${day}-${month}-${year}`;
-      };
+  const handleSearch = async () => {
+    try {
+      const { data } = await API.get("/advance", { params: formData });
+      const records = Array.isArray(data) ? data : (data.advances || []);
+      const sortedRecords = [...records].sort(
+        (a, b) => new Date(a.date) - new Date(b.date)
+      );
+      setAdvance(sortedRecords);
+      alert(data.message || "Advance fetched successfully!");
+    } catch (error) {
+      console.error("Error fetching advance", error);
+      alert(error.response?.data?.message || "Failed while fetching advance.");
+    }
+  };
 
-    return (
-    <div className="flex min-h-screen bg-gray-100 justify-center items-center px-4">
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-4xl flex flex-col gap-6">
-        <h1 className="text-2xl font-bold text-gray-800 text-center">
-          Advance Records
-        </h1>
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
 
-        {/* Filter Section */}
-        <div className="w-full bg-gray-50 p-4 rounded-xl shadow-inner flex flex-col md:flex-row gap-4">
-          {/* Month */}
-          <div className="flex flex-col w-full md:w-1/3">
-            <label className="text-gray-700 font-medium mb-1">Select Month:</label>
-            <input
+  return (
+    <Layout title="Advance Records History">
+      <div className="space-y-6">
+        <Card className="p-6 sm:p-8">
+          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#332F3A]/10">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#FBBF24] to-[#D97706] flex items-center justify-center text-white shadow-clay-button">
+              <Search className="w-5 h-5" />
+            </div>
+            <h3 className="text-xl font-bold font-heading text-[#332F3A]">
+              Search Salary Advance History
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <Input
+              label="Select Month"
+              icon={Calendar}
               type="month"
               value={formData.month}
               onChange={(e) => setFormData({ ...formData, month: e.target.value })}
-              className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
               required
             />
-          </div>
 
-          {/* Employee Name */}
-          <div className="flex flex-col w-full md:w-1/3">
-            <label className="text-gray-700 font-medium mb-1">Employee Name:</label>
-            <input
+            <Input
+              label="Employee Name"
+              icon={User}
               type="text"
-              placeholder="Enter employee name"
+              placeholder="Filter by name..."
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
               required
             />
+
+            <div className="flex items-end">
+              <Button
+                onClick={handleSearch}
+                variant="primary"
+                className="w-full gap-2"
+              >
+                <Search className="w-5 h-5" /> Search Payouts
+              </Button>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="p-6 sm:p-8">
+          <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#332F3A]/10">
+            <h3 className="text-xl font-bold font-heading text-[#332F3A]">
+              Advance Payout Logs ({advance.length})
+            </h3>
           </div>
 
-          {/* Search Button */}
-          <div className="flex items-end w-full md:w-1/3">
-            <button
-              onClick={handleSearch}
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-all"
-            >
-              Search
-            </button>
-          </div>
-        </div>
-
-        {/* Attendance Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full border border-gray-200 rounded-lg overflow-hidden">
-            <thead className="bg-gray-200 text-gray-700">
-              <tr>
-                <th className="px-4 py-2 text-left">#</th>
-                <th className="px-4 py-2 text-left">Employee</th>
-                <th className="px-4 py-2 text-left">Date</th>
-                <th className="px-4 py-2 text-left">Amount</th>
-                <th className="px-4 py-2 text-left">Note</th>
-              </tr>
-            </thead>
-            <tbody>
-              {advance.length > 0 ? (
-                advance.map((adv, index) => (
-                  <tr key={adv._id} className="border-t hover:bg-gray-50">
-                    <td className="px-4 py-2">{index + 1}</td>
-                    <td className="px-4 py-2">{formData.name}</td>
-                    <td className="px-4 py-2">{formatDate(adv.date)}</td>
-                    <td className="px-4 py-2">{adv.amount}</td>
-                    <td className="px-4 py-2">{adv.note}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="9" className="text-center py-4 text-gray-500">
-                    No records found.
-                  </td>
+          <div className="overflow-x-auto rounded-2xl bg-[#EFEBF5]/60 p-1 shadow-clay-pressed">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-[#332F3A]/10 text-xs font-black uppercase tracking-wider text-[#635F69] font-heading">
+                  <th className="py-4 px-4">#</th>
+                  <th className="py-4 px-4">Employee</th>
+                  <th className="py-4 px-4">Date</th>
+                  <th className="py-4 px-4">Advance Amount</th>
+                  <th className="py-4 px-4">Note</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Back Button */}
-        <div  className="flex justify-center gap-4">
-            <button
-                onClick={() => navigate("/advance")}
-                className="bg-gray-200 text-gray-700 py-2 px-6 rounded-lg hover:bg-gray-300 transition-all"
-            >
-                ← Back
-            </button>
+              </thead>
+              <tbody className="divide-y divide-[#332F3A]/5 text-sm font-medium text-[#332F3A]">
+                {advance.length > 0 ? (
+                  advance.map((adv, index) => (
+                    <tr key={adv._id} className="hover:bg-white/80 transition-colors">
+                      <td className="py-4 px-4 font-bold text-[#635F69]">
+                        {index + 1}
+                      </td>
+                      <td className="py-4 px-4 font-bold font-heading text-[#332F3A]">
+                        {formData.name || adv.name}
+                      </td>
+                      <td className="py-4 px-4 text-[#635F69]">
+                        {formatDate(adv.date)}
+                      </td>
+                      <td className="py-4 px-4 font-bold text-[#F59E0B]">
+                        ₹{adv.amount}
+                      </td>
+                      <td className="py-4 px-4 text-[#635F69]">
+                        {adv.note || "-"}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5" className="text-center py-8 text-[#635F69] font-medium">
+                      No advance records found. Select month & employee name to search.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
+
+          <div className="mt-6 pt-4 flex justify-start">
+            <Button
+              variant="secondary"
+              onClick={() => navigate("/advance")}
+              className="gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" /> Back to Actions
+            </Button>
+          </div>
+        </Card>
       </div>
-    </div>
+    </Layout>
   );
 }
