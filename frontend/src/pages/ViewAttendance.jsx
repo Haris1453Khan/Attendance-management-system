@@ -5,9 +5,12 @@ import Card from "../components/ui/Card.jsx";
 import Button from "../components/ui/Button.jsx";
 import Input from "../components/ui/Input.jsx";
 import Badge from "../components/ui/Badge.jsx";
+import { useToast } from "../components/ui/Toast.jsx";
 import { Printer, Search, Calendar, User } from "lucide-react";
 
 export default function ViewAttendance() {
+  const { showToast } = useToast();
+
   const [formData, setFormData] = useState({ month: "", empName: "" });
   const [attendance, setAttendance] = useState([]);
 
@@ -19,9 +22,9 @@ export default function ViewAttendance() {
         (a, b) => new Date(a.date) - new Date(b.date)
       );
       setAttendance(sortedRecords);
-      alert("Attendance fetched successfully!");
+      showToast(`Found ${sortedRecords.length} attendance records`, "success");
     } catch (error) {
-      alert(error.response?.data?.message || "Failed to fetch attendance");
+      showToast(error.response?.data?.message || "Failed to fetch attendance", "error");
     }
   };
 

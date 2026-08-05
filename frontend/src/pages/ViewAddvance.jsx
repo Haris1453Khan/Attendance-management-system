@@ -5,10 +5,13 @@ import Layout from "../components/Layout.jsx";
 import Card from "../components/ui/Card.jsx";
 import Button from "../components/ui/Button.jsx";
 import Input from "../components/ui/Input.jsx";
+import { useToast } from "../components/ui/Toast.jsx";
 import { Search, Calendar, User, ArrowLeft } from "lucide-react";
 
 export default function ViewAdvance() {
   const navigate = useNavigate();
+  const { showToast } = useToast();
+
   const [formData, setFormData] = useState({
     month: "",
     name: "",
@@ -23,10 +26,10 @@ export default function ViewAdvance() {
         (a, b) => new Date(a.date) - new Date(b.date)
       );
       setAdvance(sortedRecords);
-      alert(data.message || "Advance fetched successfully!");
+      showToast(`Found ${sortedRecords.length} advance records`, "success");
     } catch (error) {
       console.error("Error fetching advance", error);
-      alert(error.response?.data?.message || "Failed while fetching advance.");
+      showToast(error.response?.data?.message || "Failed while fetching advance.", "error");
     }
   };
 

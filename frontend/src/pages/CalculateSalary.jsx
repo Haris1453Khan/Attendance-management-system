@@ -5,25 +5,28 @@ import Card from "../components/ui/Card.jsx";
 import Button from "../components/ui/Button.jsx";
 import Input from "../components/ui/Input.jsx";
 import Badge from "../components/ui/Badge.jsx";
+import { useToast } from "../components/ui/Toast.jsx";
 import { Printer, Calculator, Calendar, User, DollarSign } from "lucide-react";
 
 export default function CalculateSalary() {
+  const { showToast } = useToast();
+
   const [formData, setFormData] = useState({ month: "", name: "" });
   const [salaryData, setSalaryData] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const calculateSalary = async () => {
     if (!formData.month || !formData.name) {
-      alert("Please select a month and enter an employee name.");
+      showToast("Please select a month and enter an employee name.", "error");
       return;
     }
     try {
       setLoading(true);
       const { data } = await API.post("/salary", formData);
       setSalaryData(data.salary || data);
-      alert("Salary calculated successfully!");
+      showToast("Salary calculated successfully!", "success");
     } catch (error) {
-      alert(error.response?.data?.message || "Failed to calculate salary");
+      showToast(error.response?.data?.message || "Failed to calculate salary", "error");
     } finally {
       setLoading(false);
     }

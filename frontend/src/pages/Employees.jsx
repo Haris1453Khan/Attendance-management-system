@@ -6,8 +6,11 @@ import Card from "../components/ui/Card.jsx";
 import Button from "../components/ui/Button.jsx";
 import Input, { Select } from "../components/ui/Input.jsx";
 import Badge from "../components/ui/Badge.jsx";
+import { useToast } from "../components/ui/Toast.jsx";
 
 export default function Employees() {
+  const { showToast } = useToast();
+
   const [employees, setEmployees] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
@@ -25,7 +28,7 @@ export default function Employees() {
       const { data } = await API.get("/employees");
       setEmployees(data);
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to fetch employees");
+      showToast(err.response?.data?.message || "Failed to fetch employees", "error");
     }
   };
 
@@ -34,10 +37,10 @@ export default function Employees() {
     try {
       if (isEditing) {
         await API.put(`/employees/${editId}`, formData);
-        alert("Employee updated successfully");
+        showToast("Employee updated successfully", "success");
       } else {
         await API.post("/employees/", formData);
-        alert("Employee added successfully");
+        showToast("Employee added successfully", "success");
       }
       setFormData({
         name: "",
@@ -50,18 +53,18 @@ export default function Employees() {
       setEditId(null);
       fetchEmployees();
     } catch (err) {
-      alert(err.response?.data?.message || "Operation failed");
+      showToast(err.response?.data?.message || "Operation failed", "error");
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure?")) return;
+    if (!window.confirm("Are you sure you want to delete this employee?")) return;
     try {
       await API.delete(`/employees/${id}`);
-      alert("Employee deleted successfully");
+      showToast("Employee deleted successfully", "success");
       fetchEmployees();
     } catch (err) {
-      alert("Failed to delete employee");
+      showToast("Failed to delete employee", "error");
     }
   };
 

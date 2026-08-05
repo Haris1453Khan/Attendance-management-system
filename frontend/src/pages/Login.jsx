@@ -1,14 +1,17 @@
-import API, { setAccessToken } from "../api/axios";
+import API, { setAccessToken } from "../api/axios.js";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Lock, User, ArrowRight, Sparkles } from "lucide-react";
-import BlobBackground from "../components/ui/BlobBackground";
-import Button from "../components/ui/Button";
-import Card from "../components/ui/Card";
-import Input from "../components/ui/Input";
+import BlobBackground from "../components/ui/BlobBackground.jsx";
+import Button from "../components/ui/Button.jsx";
+import Card from "../components/ui/Card.jsx";
+import Input from "../components/ui/Input.jsx";
+import { useToast } from "../components/ui/Toast.jsx";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { showToast } = useToast();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,10 +22,10 @@ export default function LoginPage() {
     try {
       const { data } = await API.post("/user/login", { username, password });
       setAccessToken(data.token);
-      alert("Login successful!");
+      showToast("Login successful! Welcome back.", "success");
       navigate("/dashboard");
     } catch (err) {
-      alert(err.response?.data?.message || "Login failed. Please try again.");
+      showToast(err.response?.data?.message || "Login failed. Please try again.", "error");
     } finally {
       setLoading(false);
     }

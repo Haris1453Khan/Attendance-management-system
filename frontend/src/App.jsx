@@ -13,18 +13,23 @@ import ViewAdvance from "./pages/ViewAddvance.jsx";
 import DeleteAdvance from "./pages/DeleteAdvance.jsx";
 import DeleteAttendance from "./pages/DeleteAttendance.jsx";
 import CalculateSalary from "./pages/CalculateSalary.jsx";
+import VerifyEmail from "./pages/VerifyEmail.jsx";
 
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import { ToastProvider } from "./components/ui/Toast.jsx";
 
 
 function App() {
 
   return (
-    <Router>
+    <ToastProvider>
+      <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         
         <Route path="/signup" element={<SignUp />} />
+        
+        <Route path="/verify-email" element={<VerifyEmail />} />
         
         <Route path="/login" element={<Login />} />
         
@@ -63,6 +68,7 @@ function App() {
       
       </Routes>
     </Router>
+  </ToastProvider>
   )
 }
 

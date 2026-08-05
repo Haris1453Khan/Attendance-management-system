@@ -9,9 +9,9 @@ import {
   ShieldCheck,
   Zap,
 } from "lucide-react";
-import BlobBackground from "../components/ui/BlobBackground";
-import Button from "../components/ui/Button";
-import Card from "../components/ui/Card";
+import BlobBackground from "../components/ui/BlobBackground.jsx";
+import Button from "../components/ui/Button.jsx";
+import Card from "../components/ui/Card.jsx";
 
 export default function LandingPage() {
   const navigate = useNavigate();

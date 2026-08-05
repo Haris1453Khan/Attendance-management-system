@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import API, { clearAccessToken } from "../api/axios";
+import API, { clearAccessToken } from "../api/axios.js";
 import {
   Users,
   CalendarCheck,
@@ -12,8 +12,8 @@ import {
   LayoutDashboard,
   Building2,
 } from "lucide-react";
-import BlobBackground from "./ui/BlobBackground";
-import Button from "./ui/Button";
+import BlobBackground from "./ui/BlobBackground.jsx";
+import Button from "./ui/Button.jsx";
 
 export default function Layout({ children, title }) {
   const navigate = useNavigate();

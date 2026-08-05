@@ -5,10 +5,13 @@ import Layout from "../components/Layout.jsx";
 import Card from "../components/ui/Card.jsx";
 import Button from "../components/ui/Button.jsx";
 import Input from "../components/ui/Input.jsx";
+import { useToast } from "../components/ui/Toast.jsx";
 import { Trash2, Calendar, User, ArrowLeft } from "lucide-react";
 
 export default function DeleteAttendance() {
   const navigate = useNavigate();
+  const { showToast } = useToast();
+
   const [formData, setFormData] = useState({
     date: "",
     name: "",
@@ -18,7 +21,7 @@ export default function DeleteAttendance() {
   const handleDelete = async (e) => {
     e.preventDefault();
     if (!formData.date || !formData.name) {
-      alert("Please fill in both Date and Employee Name.");
+      showToast("Please fill in both Date and Employee Name.", "error");
       return;
     }
     if (!window.confirm("Are you sure you want to delete this attendance record?")) {
@@ -27,11 +30,11 @@ export default function DeleteAttendance() {
     try {
       setLoading(true);
       await API.delete("/attendance", { params: formData });
-      alert("Attendance deleted successfully.");
+      showToast("Attendance deleted successfully.", "success");
       setFormData({ date: "", name: "" });
     } catch (error) {
       console.error("Failed to delete attendance.", error);
-      alert(error.response?.data?.message || "Failed to delete attendance");
+      showToast(error.response?.data?.message || "Failed to delete attendance", "error");
     } finally {
       setLoading(false);
     }

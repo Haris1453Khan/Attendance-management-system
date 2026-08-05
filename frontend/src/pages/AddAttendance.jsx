@@ -4,19 +4,22 @@ import API from "../api/axios.js";
 import Layout from "../components/Layout.jsx";
 import Card from "../components/ui/Card.jsx";
 import Button from "../components/ui/Button.jsx";
-import Input, { Select } from "../components/ui/Input.jsx";
+import Input from "../components/ui/Input.jsx";
+import { useToast } from "../components/ui/Toast.jsx";
 import { CalendarCheck, ArrowLeft, CheckCircle2 } from "lucide-react";
 
 export default function AddAttendance() {
+  const navigate = useNavigate();
+  const { showToast } = useToast();
+
   const [attendanceData, setAttendanceData] = useState([]);
   const [fdate, setFdate] = useState("");
   const [employees, setEmployees] = useState([]);
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!fdate) {
-      alert("Please select a date.");
+      showToast("Please select a date.", "error");
       return;
     }
     const payload = {
@@ -26,11 +29,11 @@ export default function AddAttendance() {
 
     try {
       await API.post("/attendance", payload);
-      alert("Attendance added successfully!");
+      showToast("Attendance added successfully!", "success");
       navigate("/attendance");
     } catch (error) {
       console.error("Failed while adding attendance.", error);
-      alert("Failed to add attendance.");
+      showToast(error.response?.data?.message || "Failed to add attendance.", "error");
     }
   };
 
@@ -51,7 +54,7 @@ export default function AddAttendance() {
         setAttendanceData(initialAttendance);
       } catch (error) {
         console.error("Fetch employees error:", error);
-        alert(error.response?.data?.message || "Failed to fetch employees");
+        showToast(error.response?.data?.message || "Failed to fetch employees", "error");
       }
     };
     fetchEmployees();

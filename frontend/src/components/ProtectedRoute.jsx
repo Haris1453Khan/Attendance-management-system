@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { getAccessToken } from "../api/axios";
+import { getAccessToken } from "../api/axios.js";
 
 const ProtectedRoute = ({ children }) => {
   const token = getAccessToken();

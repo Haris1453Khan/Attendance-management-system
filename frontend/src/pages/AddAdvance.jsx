@@ -5,10 +5,13 @@ import Layout from "../components/Layout.jsx";
 import Card from "../components/ui/Card.jsx";
 import Button from "../components/ui/Button.jsx";
 import Input from "../components/ui/Input.jsx";
+import { useToast } from "../components/ui/Toast.jsx";
 import { Wallet, Calendar, User, DollarSign, ArrowLeft } from "lucide-react";
 
 export default function AddAdvance() {
   const navigate = useNavigate();
+  const { showToast } = useToast();
+
   const [formData, setFormData] = useState({
     date: "",
     name: "",
@@ -20,18 +23,18 @@ export default function AddAdvance() {
   const handleAdd = async (e) => {
     e.preventDefault();
     if (!formData.date || !formData.name || !formData.amount) {
-      alert("Please fill in all required fields.");
+      showToast("Please fill in all required fields.", "error");
       return;
     }
     try {
       setLoading(true);
       await API.post("/advance", formData);
-      alert("Advance added successfully.");
+      showToast("Advance added successfully.", "success");
       setFormData({ date: "", name: "", amount: "", note: "" });
       navigate("/advance");
     } catch (error) {
       console.error("Failed to add advance.", error);
-      alert(error.response?.data?.message || "Failed to add advance");
+      showToast(error.response?.data?.message || "Failed to add advance", "error");
     } finally {
       setLoading(false);
     }

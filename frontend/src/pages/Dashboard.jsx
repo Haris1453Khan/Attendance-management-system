@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Users, CalendarCheck, DollarSign, Wallet, ArrowUpRight, Sparkles } from "lucide-react";
-import Layout from "../components/Layout";
-import Card from "../components/ui/Card";
+import Layout from "../components/Layout.jsx";
+import Card from "../components/ui/Card.jsx";
 
 export default function Dashboard() {
   const navigate = useNavigate();

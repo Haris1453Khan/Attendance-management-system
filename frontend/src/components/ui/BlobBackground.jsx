@@ -1,6 +1,6 @@
 export default function BlobBackground() {
   return (
-    <div className="pointer-events-none fixed inset-0 overflow-hidden -z-10 select-none">
+    <div className="pointer-events-none fixed inset-0 overflow-hidden z-0 select-none">
       {/* Top Left Violet Blob */}
       <div className="absolute -top-[10%] -left-[10%] h-[55vh] w-[55vh] rounded-full bg-[#8B5CF6]/15 blur-3xl animate-clay-float" />
       
