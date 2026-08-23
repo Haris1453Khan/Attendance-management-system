@@ -4,9 +4,26 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 
+const allowedOrigins = [
+  "https://haazri-lagao.vercel.app",
+  "http://localhost:5173",
+  "http://localhost:3000",
+  process.env.FRONT_END_URL,
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g. mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
+        return callback(null, true);
+      }
+      return callback(
+        new Error("CORS policy violation: Origin not allowed"),
+        false,
+      );
+    },
     credentials: true,
   }),
 );
