@@ -9,6 +9,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
   process.env.FRONT_END_URL,
+  process.env.FRONTEND_URL,
 ].filter(Boolean);
 
 app.use(
@@ -19,12 +20,11 @@ app.use(
       if (allowedOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
         return callback(null, true);
       }
-      return callback(
-        new Error("CORS policy violation: Origin not allowed"),
-        false,
-      );
+      return callback(null, false);
     },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
   }),
 );
 
