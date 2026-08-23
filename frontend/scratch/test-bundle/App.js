@@ -5944,7 +5944,7 @@ var {
 
 // src/api/axios.js
 var API = axios_default.create({
-  baseURL: "http://localhost:8000/api/",
+  baseURL: "https://attendance-management-system-sooty.vercel.app/api/",
   withCredentials: true
   // Send cookies with requests
 });
@@ -5972,7 +5972,7 @@ API.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const { data: data2 } = await axios_default.post(
-          "http://localhost:8000/api/user/refresh",
+          "https://attendance-management-system-sooty.vercel.app/api/user/refresh",
           {},
           { withCredentials: true }
         );

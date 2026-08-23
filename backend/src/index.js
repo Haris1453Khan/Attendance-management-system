@@ -9,7 +9,9 @@ dotenv.config({
 const port = process.env.PORT || 8000;
 
 app.listen(port, () => {
-  console.log("Server is running on http://localhost:8000");
+  console.log(
+    "Server is running on https://attendance-management-system-sooty.vercel.app/",
+  );
 });
 
 connectDB();

@@ -1,7 +1,9 @@
 import axios from "axios";
 
+const BASE_URL = import.meta.env.VITE_API_URL || "https://attendance-management-system-sooty.vercel.app/api/";
+
 const API = axios.create({
-  baseURL: "http://localhost:8000/api/",
+  baseURL: BASE_URL,
   withCredentials: true, // Send cookies with requests
 });
 
@@ -40,7 +42,7 @@ API.interceptors.response.use(
 
       try {
         const { data } = await axios.post(
-          "http://localhost:8000/api/user/refresh",
+          `${BASE_URL}user/refresh`,
           {},
           { withCredentials: true },
         );

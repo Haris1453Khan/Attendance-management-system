@@ -9,7 +9,7 @@ export default defineConfig({
   },
   server:{
     proxy:{
-      '/api': 'http://localhost:8000'
+      '/api': 'https://attendance-management-system-sooty.vercel.app'
     }
   },
   plugins: [react() , tailwindcss()],
