@@ -31,6 +31,19 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+import connectDB from "./db/index.js";
+
+// Ensure DB is connected before handling any API request
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error("DB Connection Middleware Error:", error);
+    res.status(500).json({ message: "Database connection failed" });
+  }
+});
+
 import userRouter from "./routes/user.routes.js";
 import handleEmployeeRouter from "./routes/employee.router.js";
 import attendanceRouter from "./routes/attendance.router.js";
